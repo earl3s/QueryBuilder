@@ -51,7 +51,7 @@ will both output
 SELECT * 
 FROM table1 
 INNER JOIN table2 ON table2.a = table1.a
-GROUP BY table.b 
+GROUP BY table1.b 
 LIMIT 0, 10
 ```
 
