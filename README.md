@@ -108,7 +108,7 @@ Query builder has support for the following features:
 * WHERE
 	* `$query->where('x = 1')->and('y = 2')` You write your own `WHERE` clause so it will handle anythign SQL can do.  `IN`, `<,` `=,` `>`, `BETWEEN`, or anything else you need.
 * GROUP BY
-	* `$query->groupBy('table.a')
+	* `$query->groupBy('table.a')`
 * ORDER BY
 	* `$query->orderBy('table.b DESC')`
 * LIMIT
