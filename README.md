@@ -22,7 +22,7 @@ $query->select('CONCAT_WS(" ", eo.name_first, eo.name_last) as employee_name, eo
 $query->call();
 ```
 
-###Becomes:
+####Becomes:
 
 ```mysql
 SELECT CONCAT_WS(" ", eo.name_first, eo.name_last) as employee_name, eo.age, o.occupation_name 
@@ -61,7 +61,7 @@ $query->select('CONCAT_WS(" ", eo.name_first, eo.name_last) as employee_name, eo
 $query->call(array(':age'=>21));
 ```
 
-###Becomes:
+####Becomes:
 
 ```mysql
 SELECT CONCAT_WS(" ", eo.name_first, eo.name_last) as employee_name, eo.age, o.occupation_name 
@@ -79,7 +79,7 @@ SELECT CONCAT_WS(" ", eo.name_first, eo.name_last) as employee_name, eo.age, o.o
 	  LIMIT 0, 100	) AS eo 
 INNER JOIN occupation o ON o.occupation_id = eo.occupation_id
 ```
-###Or:
+####Or:
 
 ```mysql
 SELECT CONCAT_WS(" ", eo.name_first, eo.name_last) as employee_name, eo.age, o.occupation_name 
@@ -94,3 +94,46 @@ INNER JOIN occupation o ON o.occupation_id = eo.occupation_id
 ```
 
 The output changes based on whether not `$isFiltered` is `true` or not. We don't have to worry about parenthesis or ugly string concatenation. Query Builder will create beautiful output for us. There is even a `prettyPrint` function will print out your query for you if you want to see what you've created laid out nicely for debugging.
+
+##Capabilities
+
+Query builder has support for the following features:
+
+* Parameters through PDO
+    * Parameters are passed through the `call` function like they would be in `PDO::execute`
+* SELECT
+    * `$query->select('*')`
+* FROM
+	* `$query->from('myTable mt')`
+* WHERE
+	* `$query->where('x = 1')->and('y = 2')` You write your own `WHERE` clause so it will handle anythign SQL can do.  `IN`, `<,` `=,` `>`, `BETWEEN`, or anything else you need.
+* GROUP BY
+	* `$query->groupBy('table.a')
+* ORDER BY
+	* `$query->orderBy('table.b DESC')`
+* LIMIT
+	* `$query->limit('0', '100')` or `$query->limit(':offset', ':count')` if you want to use pagination in a query.
+* JOINS
+	* `$query->join('table1 t1', 't1.a = tt2.a')` `INNER` is the default join type.  You can change the join type by specifying that as the third parameter to the function.  You can specify by typing the full join type, or use `'l'` for `LEFT OUTER`, `'r'` for `RIGHT OUTER`, or `'f'` for `FULL OUTER`.
+* AND & OR
+	* There are specific functions for AND and OR and they work in any context you are in.  This includes JOINS and WHERE claues. `$query->where('a = 3')->and('b > 5')->or('b < 2')`.
+* Sub Queries
+	* `$query->addSubQuery('subQueryAlias')->select('*')->from('table')` You can add any number of sub queries and Query Builder will format them and add the correct number of closing parenthesis for you.  Easy peasy.
+* HAVING
+	* `$query->having('rowCount > 100')`
+
+####Other functions:
+
+* `call($params)` will send the query to the database.  `call` optionally takes an associative array of parameters for PDO to use. So: 
+
+```php
+$query = QueryBuilder::create($pdo);
+$query->select('*')->from('people')->where('age > :age ');
+$query->call(array(':age'=>18));
+```
+* `prettyPrint` will print the query to the screen for debugging.  This includes nicely tabbed formatting for easy reading.
+* `QueryBuilder::create` is a factory method for creating a new instance of QueryBuilder.  It's setup this way so that future versions could include global presets for every query through static properties.
+
+###Licence
+
+Query Builder is licensed under the MIT license so please use it, and feel free to contribute.
