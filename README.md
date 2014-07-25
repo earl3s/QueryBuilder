@@ -35,6 +35,26 @@ SELECT CONCAT_WS(" ", eo.name_first, eo.name_last) as employee_name, eo.age, o.o
 INNER JOIN occupation o ON o.occupation_id = eo.occupation_id
 ```
 
+###Query Builder will format your query for you
+Query Builder knows what you want to do so it will order your SQL for you.
+
+```php
+$query->select('*')->join('table2', 'table2.a = table1.a')->from('table1')->limit('0', '10')->groupBy('table.b');
+```
+and 
+```php
+$query->select('*')->from('table1')->groupBy('table.b')->join('table2', 'table2.a = table1.a')->limit('0', '10');
+```
+will both output
+
+```mysql
+SELECT * 
+FROM table1 
+INNER JOIN table2 ON table2.a = table1.a
+GROUP BY table.b 
+LIMIT 0, 10
+```
+
 ##Where Query Builder shines
 
 Query Builder stands out when you have to do things like add conditional subqueries, joins, or write long queries. A great example of this is conditional filtering through subqueries.
